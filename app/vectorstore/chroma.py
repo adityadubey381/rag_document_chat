@@ -1,4 +1,4 @@
-import chromadb
+import app.vectorstore.chroma as chroma
 from typing import List, Dict, Any
 from app.vectorstore.base import BaseVectorStore
 from app.core.config import settings
@@ -6,7 +6,7 @@ from app.services.embedding_service import EmbeddingService
 
 class ChromaStore(BaseVectorStore):
     def __init__(self):
-        self.client = chromadb.PersistentClient(path=settings.VECTOR_DB_DIR)
+        self.client = chroma.PersistentClient(path=settings.VECTOR_DB_DIR)
         self.embedding_service = EmbeddingService()
         self.collection = self.client.get_or_create_collection(
             name="rag_documents"
