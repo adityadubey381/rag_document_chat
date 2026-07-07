@@ -18,6 +18,7 @@ class ChunkingService:
             
             meta = metadata_template.copy()
             meta["chunk_index"] = len(chunks)
+            meta["chunk_id"] = f"{metadata_template.get('document_id', 'doc')}_{meta['chunk_index']}"
             
             chunks.append({
                 "text": chunk_text,

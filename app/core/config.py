@@ -1,5 +1,5 @@
 import os
-from pydantic_settings import BaseSettings, SettingsConfigDict, 
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     # App Settings
@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     VECTOR_DB_DIR: str = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../vector_db"))
     
     # AI Credentials
-    OPENAI_API_KEY: str
+    OPENAI_API_KEY: str = "sk-dummy-key-for-development"  # Replace with real key in .env
     EMBEDDING_MODEL: str = "text-embedding-3-small"
     LLM_MODEL: str = "gpt-4o-mini"
     

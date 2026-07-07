@@ -22,6 +22,8 @@ class UploadService:
         """
         # 1. Generate unique file IDs and sanitize paths
         document_id = str(uuid.uuid4())
+        if not file.filename:
+            raise HTTPException(status_code=400, detail="Filename is missing.")
         safe_filename = os.path.basename(file.filename)
         _, extension = os.path.splitext(safe_filename.lower())
         
@@ -43,7 +45,7 @@ class UploadService:
                 "file_type": extension
             }
             
-            chunks = await self.chunking_service.create_chunks(clean_text, base_metadata)
+            chunks = await self.chunking_service.split_text(clean_text, base_metadata)
             
             if not chunks:
                 raise HTTPException(status_code=422, detail="No extractable or indexable content found.")

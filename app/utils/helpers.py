@@ -1,3 +1,4 @@
+import os
 from fastapi import HTTPException
 
 # Define strict size thresholds (e.g., 25 MegaBytes)

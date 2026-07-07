@@ -1,5 +1,6 @@
 import re
 import uuid
+from typing import Generator
 
 def generate_secure_uuid() -> str:
     """Generates standard tracking identification hashes."""
@@ -16,3 +17,4 @@ def slice_list_into_batches(items: list, batch_size: int) -> Generator[list, Non
     """Chunks arrays into sequential batches for parallel processing."""
     for i in range(0, len(items), batch_size):
         yield items[i : i + batch_size]
+

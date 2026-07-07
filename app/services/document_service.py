@@ -14,5 +14,4 @@ class DocumentService:
         embeddings = await self.embedding_service.get_embeddings(texts)
         
         # 3. Save directly to your collection
-        # (Update ChromaStore.add_documents signature to accept pre-computed embeddings)
-        await self.vector_store.add_documents_with_embeddings(texts, embeddings, metadatas, ids)
+        await self.vector_store.add_documents(texts, metadatas, ids)

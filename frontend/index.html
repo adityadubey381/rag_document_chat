@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Document AI Chat</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- PrismJS for Code Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar: Uploads & Document Management -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <div class="brand-logo">
+                        <i class="fa-solid fa-brain-circuit"></i>
+                    </div>
+                    <h1>DocuMind AI</h1>
+                </div>
+                <button class="toggle-sidebar-btn mobile-only" id="closeSidebarBtn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Upload Box -->
+            <div class="upload-section">
+                <h2>Ingest Documents</h2>
+                <div class="upload-zone" id="uploadZone">
+                    <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                    <p class="upload-text">Drag & drop your files here</p>
+                    <span class="upload-hint">Supports PDF, DOCX, TXT</span>
+                    <input type="file" id="fileInput" accept=".pdf,.docx,.txt" multiple style="display: none;">
+                    <button class="btn btn-secondary select-files-btn" id="selectFilesBtn">Browse Files</button>
+                </div>
+                <div class="upload-progress-container" id="uploadProgressContainer" style="display: none;">
+                    <div class="upload-progress-info">
+                        <span id="uploadingFileName">file.pdf</span>
+                        <span id="uploadProgressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="progressBarFill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents List -->
+            <div class="documents-list-section">
+                <div class="section-title-row">
+                    <h3>Indexed Files</h3>
+                    <span class="doc-count" id="docCount">0</span>
+                </div>
+                <div class="documents-list" id="documentsList">
+                    <!-- Documents dynamically injected here -->
+                    <div class="empty-docs-state">
+                        <i class="fa-regular fa-folder-open"></i>
+                        <p>No documents uploaded yet</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <span class="dot active"></span>
+                    <span class="status-text">API Online</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Panel: Chat Interface -->
+        <main class="chat-panel">
+            <header class="chat-header">
+                <div class="header-left">
+                    <button class="toggle-sidebar-btn" id="openSidebarBtn">
+                        <i class="fa-solid fa-bars-staggered"></i>
+                    </button>
+                    <div class="header-title">
+                        <h2>Conversational RAG</h2>
+                        <p class="subtitle">Query documents using vector search contexts</p>
+                    </div>
+                </div>
+                
+                <div class="header-actions">
+                    <!-- Settings Trigger -->
+                    <button class="btn-icon" id="settingsToggleBtn" title="Search Parameters">
+                        <i class="fa-solid fa-sliders"></i>
+                    </button>
+                    <!-- Clear Chat -->
+                    <button class="btn-icon text-danger" id="clearChatBtn" title="Clear Conversation">
+                        <i class="fa-regular fa-trash-can"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Configuration Dropdown Settings Panel -->
+            <div class="settings-dropdown" id="settingsDropdown">
+                <div class="settings-row">
+                    <div class="settings-desc">
+                        <label for="topKSlider">Source Count (top_k)</label>
+                        <span class="settings-hint">Number of context segments fetched from ChromaDB to construct prompt context.</span>
+                    </div>
+                    <div class="slider-control">
+                        <input type="range" id="topKSlider" min="1" max="10" value="4">
+                        <span class="slider-val" id="topKVal">4</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Message log -->
+            <section class="chat-history" id="chatHistory">
+                <!-- Welcome View (Default) -->
+                <div class="welcome-container" id="welcomeContainer">
+                    <div class="welcome-graphic">
+                        <div class="glow-sphere"></div>
+                        <i class="fa-solid fa-comments-dollar graphic-icon"></i>
+                    </div>
+                    <h1>Document Intelligence Chat</h1>
+                    <p>Unlock structured search, insights, and summaries. Upload technical reports, research files, or books on the left and query them instantly in natural language.</p>
+                    
+                    <div class="quick-steps">
+                        <div class="step-card">
+                            <span class="step-num">1</span>
+                            <h3>Upload</h3>
+                            <p>Select PDF, DOCX, or TXT documents.</p>
+                        </div>
+                        <div class="step-card">
+                            <span class="step-num">2</span>
+                            <h3>Index</h3>
+                            <p>System splits and converts text into vector chunks.</p>
+                        </div>
+                        <div class="step-card">
+                            <span class="step-num">3</span>
+                            <h3>Query</h3>
+                            <p>Ask questions and see exact source references.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat history bubbles injected here -->
+            </section>
+
+            <!-- Chat Input form -->
+            <footer class="chat-input-container">
+                <form id="chatForm" class="chat-form">
+                    <div class="input-wrapper">
+                        <textarea id="messageInput" rows="1" placeholder="Ask a question about your documents..." required></textarea>
+                        <button type="submit" class="send-btn" id="sendBtn" disabled>
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div class="input-footer">
+                        <span class="rag-indicator"><i class="fa-solid fa-shield-halved"></i> Verified Source Anchored RAG</span>
+                    </div>
+                </form>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Marked Library for Markdown Parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    <!-- PrismJS for beautiful code syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <!-- Custom JS Application controller -->
+    <script src="/app.js"></script>
+</body>
+</html>
